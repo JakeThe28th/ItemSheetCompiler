@@ -1,0 +1,75 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'application'
+archivesBaseName = 'ItemSheetCompiler'
+version = '0.2' 
+
+
+project.ext.lwjglVersion = "3.3.0"
+project.ext.jomlVersion = "1.10.2"
+project.ext.lwjglNatives = "natives-windows"
+
+
+repositories {
+    mavenCentral()
+	maven { url 'https://jitpack.io/' }
+}
+
+jar {
+	manifest {
+    	attributes "Main-Class": "io.github.jakethe28th.game.Main"
+    }
+}
+
+
+task fatJar(type: Jar) {
+  manifest.from jar.manifest
+  classifier = 'all'
+  from {
+    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+  } {
+    exclude "META-INF/*.SF"
+    exclude "META-INF/*.DSA"
+    exclude "META-INF/*.RSA"
+    exclude "META-INF/*.LIST"
+    exclude "META-INF/*"
+    duplicatesStrategy = 'include'
+  }
+  with jar
+}
+
+application {
+    mainClass = 'io.github.jakethe28th.game.Main'
+    executableDir = 'item_sheet_compiler'
+}
+
+dependencies {
+   implementation 'log4j:log4j:1.2.16'
+   implementation 'com.github.Querz:NBT:6.1'
+   
+   implementation(files('ext/TruceEngine-0.1.jar'))
+   
+   implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+	implementation "org.lwjgl:lwjgl"
+	implementation "org.lwjgl:lwjgl-assimp"
+	implementation "org.lwjgl:lwjgl-glfw"
+	implementation "org.lwjgl:lwjgl-nanovg"
+	implementation "org.lwjgl:lwjgl-nuklear"
+	implementation "org.lwjgl:lwjgl-openal"
+	implementation "org.lwjgl:lwjgl-opengl"
+	implementation "org.lwjgl:lwjgl-par"
+	implementation "org.lwjgl:lwjgl-stb"
+	implementation "org.lwjgl:lwjgl-vulkan"
+	runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-nanovg::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-nuklear::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-par::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+	implementation "org.joml:joml:${jomlVersion}"
+} 
